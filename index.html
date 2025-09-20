@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Preview</title>
+</head>
+<body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LenseKart — Blue Light Filter Glasses</title>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+<style>
+  :root{
+    --accent:#0066cc;
+    --muted:#666;
+    --bg:#f6f7fb;
+    --card:#fff;
+    --danger:#d32f2f;
+    --success:#178a3d;
+    --glass:#cfe8ff;
+    font-family: Inter, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:#111; -webkit-font-smoothing:antialiased;
+  }
+  header{
+    background:linear-gradient(90deg,#fff 0,#f8fbff 100%);
+    padding:14px 20px; display:flex; gap:12px; align-items:center; border-bottom:1px solid #e7eefc; position:sticky; top:0; z-index:50;
+  }
+  .logo {font-weight:700; color:var(--accent); font-size:20px}
+  .search{flex:1}
+  .search input{width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e0e7ff}
+  .iconbar{display:flex; gap:12px; align-items:center}
+  .icon{background:#fff; padding:8px; border-radius:8px; box-shadow:0 1px 3px rgba(10,20,40,0.06); cursor:pointer}
+  .container{max-width:1120px; margin:20px auto; padding:0 16px}
+  .grid{display:grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap:18px}
+  .card{background:var(--card); border-radius:12px; padding:14px; box-shadow:0 6px 18px rgba(10,20,40,0.04); display:flex; flex-direction:column; gap:10px}
+  .thumb{height:160px; border-radius:10px; background:linear-gradient(135deg,var(--glass),#e9f4ff); display:flex; align-items:center; justify-content:center; font-weight:700; color:#0b3558}
+  .thumb img {height: 80%; width: auto;}
+  .title{font-size:16px; font-weight:600}
+  .price{font-size:18px; font-weight:700; color:#0b3558}
+  .muted{color:var(--muted); font-size:13px}
+  .btn{padding:10px 12px; border-radius:8px; border:0; cursor:pointer}
+  .btn-primary{background:var(--accent); color:#fff}
+  .btn-ghost{background:transparent; border:1px solid #e0e7ff}
+  .out{opacity:0.6; filter:grayscale(20%)}
+  footer{padding:28px; text-align:center; color:var(--muted)}
+
+  /* cart panel */
+  .cart-btn{position:relative}
+  .cart-count{position:absolute; right:6px; top:6px; background:#ff3b30; color:#fff; border-radius:12px; padding:2px 7px; font-size:12px}
+  .modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,0.4); display:none; align-items:center; justify-content:center; z-index:100}
+  .modal{background:var(--card); border-radius:12px; box-shadow:0 10px 40px rgba(10,20,40,0.4); max-width:960px; width:100%; max-height:90vh; overflow:auto}
+  .modal .head{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid #f0f6ff}
+  .modal .body{padding:18px}
+  .cart-list{display:flex; flex-direction:column; gap:12px}
+  .cart-item{display:flex; gap:12px; align-items:center; padding:10px; border-radius:8px; border:1px solid #f1f6ff}
+  .cart-item img{width:70px; height:55px; object-fit:cover; border-radius:6px}
+  .qtybox{display:flex; gap:6px; align-items:center}
+  .small{font-size:13px}
+  .summary{background:#fcfdff; padding:12px; border-radius:10px; border:1px solid #eef6ff}
+
+  /* orders modal */
+  .orders-list{display:flex; flex-direction:column; gap:12px}
+  .order-card{border:1px solid #eef6ff; padding:12px; border-radius:8px; background:#fff}
+  .danger-border { border-color: var(--danger) !important; }
+
+  /* responsive */
+  @media (max-width:640px){
+    .thumb{height:120px}
+    header{padding:10px}
+  }
+
+  /* promo box */
+  .promo-suggestion{background:#e9f7ff; padding:8px 10px; border-radius:8px; display:inline-flex; gap:10px; align-items:center; margin-top:6px}
+  .qr-wrap{display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center}
+  .upi-box{background:#fff; padding:10px; border-radius:8px; border:1px dashed #e9f1ff}
+  .mutetxt{color:#8a98a9; font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">LenseKart</div>
+  <div class="search"><input id="siteSearch" placeholder="Search blue light glasses, e.g. 'Classic Blue'"/></div>
+  <div class="iconbar">
+    <div class="icon" id="ordersBtn" title="My Orders (click)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 6h18" stroke="#0b3558" stroke-width="1.6" stroke-linecap="round"/><path d="M3 12h18" stroke="#0b3558" stroke-width="1.6" stroke-linecap="round"/><path d="M3 18h18" stroke="#0b3558" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </div>
+    <div class="icon cart-btn" id="cartBtn" title="Cart">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6h15l-1.5 9h-11z" stroke="#0b3558" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1" fill="#0b3558"/><circle cx="18" cy="20" r="1" fill="#0b3558"/></svg>
+      <div class="cart-count" id="cartCount" style="display:none">0</div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px">
+    <div>
+      <h1 style="margin:0; font-size:20px">Blue Light Filter Glasses — Comfortable, Stylish</h1>
+      <div class="muted">Protect your eyes during long screen sessions</div>
+    </div>
+    <div style="text-align:right">
+      <div class="mutetxt">Promocode: <strong>CBSKARTV25</strong> — <span id="promoExpiryText"></span></div>
+    </div>
+  </section>
+
+  <section class="grid" id="productGrid">
+    </section>
+</main>
+
+<div class="modal-backdrop" id="cartModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="head">
+      <div style="display:flex; gap:12px; align-items:center">
+        <h3 style="margin:0">Your Cart</h3>
+        <div class="muted small" id="cartStatus">0 items</div>
+      </div>
+      <div>
+        <button class="btn btn-ghost" id="closeCart">Close</button>
+      </div>
+    </div>
+
+    <div class="body">
+      <div style="display:flex; gap:18px; flex-wrap:wrap">
+        <div style="flex:1; min-width:280px">
+          <div class="cart-list" id="cartList">
+            </div>
+
+          <div style="margin-top:12px">
+            <div style="display:flex; gap:8px; align-items:center; justify-content:space-between">
+              <div>
+                <label class="muted small">Promocode</label>
+                <div style="display:flex; gap:8px; margin-top:6px">
+                  <input id="promoInput" placeholder="Enter code" style="padding:10px; border-radius:8px; border:1px solid #e7efff; flex:1" />
+                  <button class="btn btn-primary" id="applyPromo">Apply</button>
+                </div>
+                <div class="promo-suggestion" id="promoSuggest">
+                  <div style="font-weight:700">Use <span style="color:var(--accent)">CBSKARTV25</span></div>
+                  <div class="muted small">— Save ₹1,501 (expires in 3 days)</div>
+                </div>
+                <div style="margin-top:8px" id="promoMsg"></div>
+              </div>
+
+              <div style="width:320px">
+                <div class="summary">
+                  <div style="display:flex; justify-content:space-between"><div class="muted small">Subtotal</div><div id="subtotalText">₹0</div></div>
+                  <div style="display:flex; justify-content:space-between"><div class="muted small">Discount</div><div id="discountText">- ₹0</div></div>
+                  <hr style="border:none; border-top:1px dashed #eef6ff; margin:8px 0" />
+                  <div style="display:flex; justify-content:space-between; font-weight:700"><div>Total</div><div id="totalText">₹0</div></div>
+                  <div style="margin-top:10px; display:flex; gap:8px; justify-content:space-between; align-items:center">
+                    <button class="btn btn-primary" id="proceedBtn">Checkout</button>
+                    <button class="btn btn-ghost" id="clearCart">Clear</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="width:360px; min-width:260px">
+          <div class="card">
+            <h4 style="margin:0 0 6px 0">Delivery details</h4>
+            <div class="muted small">Please enter shipping details before payment</div>
+            <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px">
+              <input id="nameInput" placeholder="Full name" style="padding:10px; border-radius:8px; border:1px solid #eef6ff" />
+              <input id="phoneInput" placeholder="Mobile number" style="padding:10px; border-radius:8px; border:1px solid #eef6ff" />
+              <textarea id="addressInput" rows="3" placeholder="Full address" style="padding:10px; border-radius:8px; border:1px solid #eef6ff"></textarea>
+              <input id="pincodeInput" placeholder="Pincode" style="padding:10px; border-radius:8px; border:1px solid #eef6ff" />
+              <div id="deliveryEstimate" class="muted small" style="margin-top:6px; min-height:1rem"></div>
+            </div>
+
+            <hr style="margin:12px 0; border:none; border-top:1px solid #f4f8ff" />
+
+            <h4 style="margin:0 0 6px 0">Payment</h4>
+            <div style="margin-top:8px" class="qr-wrap">
+              <div style="padding:10px; background:#fff; border-radius:8px; text-align:center">
+                <div style="font-size:13px; margin-bottom:6px">Scan QR</div>
+                <img id="upiQR" alt="UPI QR" style="width:140px; height:140px; border-radius:8px; background:#fff" />
+              </div>
+            </div>
+            <a id="openUpi" class="btn btn-primary" href="#" target="_blank" style="display:block; text-align:center; margin-top: 12px;">Proceed to Pay via UPI</a>
+
+            <div style="margin-top:12px;">
+              <div class="muted small" style="color:var(--danger)">After payment, you can submit your transaction id below</div>
+              <div style="display:flex; gap:8px; margin-top:8px">
+                <input id="txnInput" placeholder="Transaction ID (UPI Txn/Ref)" class="danger-border" style="padding:10px; border-radius:8px; flex:1" />
+                <button class="btn btn-primary" id="submitTxn">Submit</button>
+              </div>
+              <div id="txnMsg" style="margin-top:8px"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-backdrop" id="ordersModal">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:820px">
+    <div class="head">
+      <h3 style="margin:0">My Orders</h3>
+      <div><button class="btn btn-ghost" id="closeOrders">Close</button></div>
+    </div>
+    <div class="body">
+      <div class="orders-list" id="ordersList">
+        </div>
+      <div style="margin-top:12px; color:var(--muted); font-size:13px">Saved locally. Click an order to view/print/download as PDF.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © LenseKart — Built for Sanket. Enjoy selling! — UPI: oksdcb@ybl
+</footer>
+
+<script>
+/* ====== SETTINGS ======
+ * Replace the FORMSPREE_URL with your formspree endpoint:
+ * Example: const FORMSPREE_URL = 'https://formspree.io/f/mnqwpzln';
+ */
+const FORMSPREE_URL = 'https://formspree.io/f/yourformid'; // <-- REPLACE this with your Formspree form action URL
+
+// site data
+const PRODUCTS = (() => {
+  const arr = [];
+  // first product (in stock)
+  arr.push({
+    id: 'g1',
+    name: 'Classic Blue Light Filter Glasses',
+    desc: 'Anti-glare lenses, lightweight frame, unisex.',
+    price: 2299,
+    inStock: true,
+    img: 'https://i.ibb.co/60V0G5M/glasses-1.png'
+  });
+  // other 14 products out of stock
+  for(let i=2;i<=15;i++){
+    arr.push({
+      id: 'g'+i,
+      name: `Style ${i} — Blue Filter Glasses`,
+      desc: 'Currently unavailable.',
+      price: 2299 + i*10,
+      inStock: false,
+      img: null
+    });
+  }
+  return arr;
+})();
+
+// promo config (code + discount amount)
+const PROMO_CODE = 'CBSKARTV25';
+const PROMO_DISCOUNT = 1501;
+
+// promo expiry: 3 days from today (displayed to user and enforced)
+const promoExpiryDate = (() => {
+  const d = new Date();
+  d.setDate(d.getDate() + 3);
+  // zero time for compare
+  d.setHours(23,59,59,999);
+  return d;
+})();
+
+// utility: format INR
+function fmtINR(n){
+  return '₹' + n.toLocaleString('en-IN', {maximumFractionDigits:0});
+}
+
+/* ---------- DOM helpers ---------- */
+const productGrid = document.getElementById('productGrid');
+const cartBtn = document.getElementById('cartBtn');
+const cartCountEl = document.getElementById('cartCount');
+const cartModal = document.getElementById('cartModal');
+const cartListEl = document.getElementById('cartList');
+const subtotalText = document.getElementById('subtotalText');
+const totalText = document.getElementById('totalText');
+const discountText = document.getElementById('discountText');
+const cartStatus = document.getElementById('cartStatus');
+const promoSuggest = document.getElementById('promoSuggest');
+const promoExpiryText = document.getElementById('promoExpiryText');
+const promoInput = document.getElementById('promoInput');
+const applyPromoBtn = document.getElementById('applyPromo');
+const promoMsg = document.getElementById('promoMsg');
+const proceedBtn = document.getElementById('proceedBtn');
+const closeCart = document.getElementById('closeCart');
+const clearCartBtn = document.getElementById('clearCart');
+
+const nameInput = document.getElementById('nameInput');
+const phoneInput = document.getElementById('phoneInput');
+const addressInput = document.getElementById('addressInput');
+const pincodeInput = document.getElementById('pincodeInput');
+const deliveryEstimate = document.getElementById('deliveryEstimate');
+
+const upiQR = document.getElementById('upiQR');
+const openUpiLink = document.getElementById('openUpi');
+const txnInput = document.getElementById('txnInput');
+const submitTxnBtn = document.getElementById('submitTxn');
+const txnMsg = document.getElementById('txnMsg');
+
+const ordersBtn = document.getElementById('ordersBtn');
+const ordersModal = document.getElementById('ordersModal');
+const ordersList = document.getElementById('ordersList');
+const closeOrders = document.getElementById('closeOrders');
+
+const cartCountKey = 'lk_cart_v1';
+const ordersKey = 'lk_orders_v1';
+let cart = loadCart();
+let appliedPromo = loadPromo(); // {code, appliedOn}
+
+function loadCart(){
+  try{
+    const raw = localStorage.getItem(cartCountKey);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return [];}
+}
+function saveCart(){
+  localStorage.setItem(cartCountKey, JSON.stringify(cart));
+}
+function loadPromo(){
+  try{
+    const raw = localStorage.getItem('lk_promo_v1');
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function savePromo(){
+  localStorage.setItem('lk_promo_v1', JSON.stringify(appliedPromo));
+}
+
+/* ---------- Render products ---------- */
+function renderProducts(list=PRODUCTS){
+  productGrid.innerHTML = '';
+  for(const p of list){
+    const el = document.createElement('div');
+    el.className = 'card' + (p.inStock ? '' : ' out');
+    const thumbContent = p.img ? `<img src="${p.img}" alt="${escapeHtml(p.name)}" />` : (p.inStock ? 'In stock' : 'Out of stock');
+    el.innerHTML = `
+      <div class="thumb">${thumbContent}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <div>
+          <div class="title">${escapeHtml(p.name)}</div>
+          <div class="muted small">${escapeHtml(p.desc)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="price">${fmtINR(p.price)}</div>
+          <div class="muted small">Inclusive of taxes</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:8px">
+        <button class="btn btn-primary addToCart" data-id="${p.id}" ${p.inStock ? '' : 'disabled'}>${p.inStock ? 'Add to cart' : 'Notify me'}</button>
+        <button class="btn btn-ghost" data-id="${p.id}" onclick="viewProduct('${p.id}')">View</button>
+      </div>
+    `;
+    productGrid.appendChild(el);
+  }
+}
+
+/* ---------- Cart logic ---------- */
+function findProduct(id){ return PRODUCTS.find(x=>x.id===id); }
+function addToCart(id, qty=1){
+  const p = findProduct(id);
+  if(!p || !p.inStock) return;
+  const item = cart.find(c=>c.id===id);
+  if(item) item.qty += qty;
+  else cart.push({id:id, qty:qty, price:p.price, name:p.name, img:p.img});
+  saveCart();
+  renderCart();
+  showCart();
+}
+function removeFromCart(id){
+  cart = cart.filter(c=>c.id!==id);
+  saveCart();
+  renderCart();
+}
+function updateQty(id, qty){
+  const it = cart.find(c=>c.id===id);
+  if(!it) return;
+  it.qty = Math.max(1, qty|0);
+  saveCart();
+  renderCart();
+}
+function clearCart(){
+  cart = [];
+  saveCart();
+  appliedPromo = null;
+  savePromo();
+  renderCart();
+}
+
+function calcTotals(){
+  const subtotal = cart.reduce((s,c)=> s + (c.price * c.qty), 0);
+  let discount = 0;
+  if(appliedPromo && appliedPromo.code === PROMO_CODE){
+    // ensure promo not expired
+    const now = new Date();
+    if(now <= promoExpiryDate){
+      discount = Math.min(PROMO_DISCOUNT, subtotal);
+    }else{
+      // expired, clear
+      appliedPromo = null;
+      savePromo();
+    }
+  }
+  const total = Math.max(0, subtotal - discount);
+  return {subtotal, discount, total};
+}
+
+function renderCart(){
+  // update UI
+  const count = cart.reduce((s,c)=>s+c.qty, 0);
+  if(count>0){ cartCountEl.style.display='block'; cartCountEl.textContent = count; }
+  else cartCountEl.style.display='none';
+  cartListEl.innerHTML = '';
+  if(cart.length===0){
+    cartListEl.innerHTML = '<div class="muted">Your cart is empty. Add items to proceed.</div>';
+  }else{
+    for(const it of cart){
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      const p = findProduct(it.id);
+      const imgSource = p.img ? p.img : `data:image/svg+xml;utf8,${encodeURIComponent(generatePlaceholderSVG(p.name))}`;
+      row.innerHTML = `
+        <img src="${imgSource}" alt="${escapeHtml(p.name)}" />
+        <div style="flex:1">
+          <div style="font-weight:700">${escapeHtml(it.name)}</div>
+          <div class="muted small">Price: ${fmtINR(it.price)}</div>
+          <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+            <div class="qtybox small">
+              <button class="btn-ghost small decBtn" data-id="${it.id}">-</button>
+              <div style="padding:6px 8px; border-radius:6px; border:1px solid #eef6ff">${it.qty}</div>
+              <button class="btn-ghost small incBtn" data-id="${it.id}">+</button>
+            </div>
+            <div class="muted small">Total: <strong>${fmtINR(it.price*it.qty)}</strong></div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <button class="btn btn-ghost removeBtn" data-id="${it.id}">Remove</button>
+        </div>
+      `;
+      cartListEl.appendChild(row);
+    }
+  }
+  const totals = calcTotals();
+  subtotalText.textContent = fmtINR(totals.subtotal);
+  discountText.textContent = '- ' + fmtINR(totals.discount);
+  totalText.textContent = fmtINR(totals.total);
+  cartStatus.textContent = `${cart.length} ${cart.length===1?'item':'items'}`;
+  setUpiDisplay();
+}
+
+/* ---------- promo ---------- */
+function isPromoExpired(){
+  return new Date() > promoExpiryDate;
+}
+function showPromoExpiry(){
+  const opt = { year: 'numeric', month: 'short', day: 'numeric' };
+  promoExpiryText.textContent = `Expires: ${promoExpiryDate.toLocaleDateString(undefined,opt)}`;
+  // also in suggestion small text:
+  promoSuggest.querySelector('.muted')?.textContent;
+}
+applyPromoBtn.addEventListener('click', ()=>{
+  const code = (promoInput.value || '').trim();
+  if(!code){
+    promoMsg.textContent = 'Enter a promocode';
+    return;
+  }
+  if(isPromoExpired()){
+    promoMsg.innerHTML = '<span style="color:var(--danger)">This promocode has expired.</span>';
+    appliedPromo = null;
+    savePromo();
+    renderCart();
+    return;
+  }
+  if(code === PROMO_CODE){
+    appliedPromo = { code: code, appliedOn: new Date().toISOString() };
+    savePromo();
+    promoMsg.innerHTML = `<span style="color:var(--success)">Applied ${code} — ₹${PROMO_DISCOUNT} off</span>`;
+    renderCart();
+  }else{
+    promoMsg.innerHTML = '<span style="color:var(--danger)">Invalid promocode</span>';
+  }
+});
+
+/* ---------- Checkout / Delivery estimate ---------- */
+pincodeInput.addEventListener('input', updateDeliveryEstimate);
+function updateDeliveryEstimate(){
+  const pin = (pincodeInput.value||'').trim();
+  if(!/^\d{6}$/.test(pin)){
+    deliveryEstimate.textContent = '';
+    return;
+  }
+  // delivery date = current date + 10 days
+  const d = new Date();
+  d.setDate(d.getDate() + 10);
+  const opt = { year:'numeric', month:'short', day:'numeric' };
+  deliveryEstimate.innerHTML = `Delivery by <strong>${d.toLocaleDateString(undefined,opt)}</strong>`;
+}
+
+/* ---------- Payment: UPI link + QR ---------- */
+const upiId = 'oksdcb@ybl';
+function buildUpiLink(amount){
+  // amount optional
+  const pa = encodeURIComponent(upiId);
+  const pn = encodeURIComponent('LenseKart');
+  const mc = encodeURIComponent('LenseKart');
+  let link = `upi://pay?pa=${pa}&pn=${pn}&mc=${mc}`;
+  if(amount) link += `&am=${amount}`;
+  link += `&cu=INR`;
+  return link;
+}
+function setUpiDisplay(){
+  const totals = calcTotals();
+  const upi = buildUpiLink(totals.total > 0 ? totals.total : '');
+  openUpiLink.href = upi;
+  // generate QR via new API
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upi)}`;
+  upiQR.src = qrUrl;
+  console.log('QR Code URL:', qrUrl);
+}
+
+/* ---------- Submit transaction id / Formspree ---------- */
+submitTxnBtn.addEventListener('click', async ()=>{
+  const txn = (txnInput.value||'').trim();
+  const name = (nameInput.value||'').trim();
+  const phone = (phoneInput.value||'').trim();
+  const addr = (addressInput.value||'').trim();
+  const pin = (pincodeInput.value||'').trim();
+  if(!txn || !name || !phone || !addr || cart.length===0){
+    txnMsg.innerHTML = '<span style="color:var(--danger)">Please complete name, phone, address, cart and enter transaction id.</span>';
+    return;
+  }
+  // build data payload
+  const order = {
+    id: 'ORD-'+Date.now(),
+    name, phone, address: addr, pincode: pin, txnId: txn,
+    items: cart.map(c=>({id:c.id, name:c.name, qty:c.qty, price:c.price})),
+    subtotal: calcTotals().subtotal,
+    discount: calcTotals().discount,
+    total: calcTotals().total,
+    date: new Date().toISOString()
+  };
+
+  txnMsg.textContent = 'Submitting...';
+  // send to Formspree
+  try{
+    if(!FORMSPREE_URL || FORMSPREE_URL.includes('yourformid')){
+      // placeholder: still save order locally and show success, but warn user
+      txnMsg.innerHTML = '<span style="color:var(--muted)">Formspree endpoint not configured. Replace FORMSPREE_URL in the HTML with your endpoint to send data. Order saved locally.</span>';
+      saveOrder(order);
+      clearCart();
+      renderOrders();
+      txnMsg.innerHTML += '<div style="color:var(--success)">Order saved locally.</div>';
+      return;
+    }
+    const formData = new FormData();
+    formData.append('orderId', order.id);
+    formData.append('name', order.name);
+    formData.append('phone', order.phone);
+    formData.append('address', order.address);
+    formData.append('pincode', order.pincode);
+    formData.append('txnId', order.txnId);
+    formData.append('items', JSON.stringify(order.items));
+    formData.append('subtotal', order.subtotal);
+    formData.append('discount', order.discount);
+    formData.append('total', order.total);
+    formData.append('date', order.date);
+
+    const res = await fetch(FORMSPREE_URL, { method:'POST', body: formData, headers: { 'Accept': 'application/json' } });
+    if(res.ok){
+      txnMsg.innerHTML = '<span style="color:var(--success)">Submitted successfully. Thank you!</span>';
+      saveOrder(order);
+      clearCart();
+      renderOrders();
+    }else{
+      const text = await res.text();
+      txnMsg.innerHTML = `<span style="color:var(--danger)">Submission failed. Server response: ${escapeHtml(text)}</span>`;
+    }
+  }catch(err){
+    txnMsg.innerHTML = `<span style="color:var(--danger)">Error sending: ${escapeHtml(err.message)}</span>`;
+  }
+});
+
+function saveOrder(order){
+  try{
+    const raw = localStorage.getItem(ordersKey);
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.unshift(order); // latest first
+    localStorage.setItem(ordersKey, JSON.stringify(arr));
+  }catch(e){}
+}
+
+/* ---------- Orders modal ---------- */
+ordersBtn.addEventListener('click', ()=>{
+  renderOrders();
+  ordersModal.style.display = 'flex';
+});
+closeOrders.addEventListener('click', ()=> ordersModal.style.display='none');
+
+function renderOrders(){
+  ordersList.innerHTML = '';
+  const raw = localStorage.getItem(ordersKey);
+  const arr = raw ? JSON.parse(raw) : [];
+  if(arr.length===0){
+    ordersList.innerHTML = '<div class="muted">No orders yet.</div>';
+    return;
+  }
+  for(const o of arr){
+    const card = document.createElement('div');
+    card.className = 'order-card';
+    const date = new Date(o.date).toLocaleString();
+    card.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:700">Order ${escapeHtml(o.id)}</div>
+          <div class="muted small">${escapeHtml(o.name)} • ${escapeHtml(o.phone)} • ${escapeHtml(date)}</div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <button class="btn btn-ghost viewOrderBtn" data-id="${escapeHtml(o.id)}">View</button>
+          <button class="btn btn-primary printOrderBtn" data-id="${escapeHtml(o.id)}">Download PDF</button>
+        </div>
+      </div>
+    `;
+    ordersList.appendChild(card);
+  }
+
+  // attach listeners
+  document.querySelectorAll('.viewOrderBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      const id = btn.dataset.id;
+      const raw = localStorage.getItem(ordersKey);
+      const arr = raw ? JSON.parse(raw) : [];
+      const o = arr.find(x=>x.id===id);
+      if(!o) return alert('Order not found');
+      alert(prettyOrderText(o));
+    });
+  });
+  document.querySelectorAll('.printOrderBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=> {
+      const id = btn.dataset.id;
+      const raw = localStorage.getItem(ordersKey);
+      const arr = raw ? JSON.parse(raw) : [];
+      const o = arr.find(x=>x.id===id);
+      if(!o) return alert('Order not found');
+      // open printable window
+      const w = window.open('', '_blank');
+      const html = renderOrderHtmlPrintable(o);
+      w.document.write(html);
+      w.document.close();
+      // give time then focus and print
+      setTimeout(()=>{ w.print(); }, 500);
+    });
+  });
+}
+
+/* ---------- UI actions ---------- */
+cartBtn.addEventListener('click', showCart);
+closeCart.addEventListener('click', ()=> cartModal.style.display='none');
+document.getElementById('siteSearch').addEventListener('input', (e)=>{
+  const q = (e.target.value||'').toLowerCase().trim();
+  const filtered = PRODUCTS.filter(p=> p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+  renderProducts(filtered);
+});
+
+function showCart(){
+  renderCart();
+  cartModal.style.display = 'flex';
+}
+
+document.getElementById('productGrid').addEventListener('click', (e)=>{
+  if(e.target.classList.contains('addToCart')){
+    const id = e.target.dataset.id;
+    addToCart(id, 1);
+  }
+});
+
+cartListEl.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('incBtn')){
+    const id = e.target.dataset.id;
+    updateQty(id, (cart.find(c=>c.id===id).qty)+1);
+  }else if(e.target.classList.contains('decBtn')){
+    const id = e.target.dataset.id;
+    const it = cart.find(c=>c.id===id);
+    if(it.qty>1) updateQty(id, it.qty-1);
+    else removeFromCart(id);
+  }else if(e.target.classList.contains('removeBtn')){
+    const id = e.target.dataset.id;
+    removeFromCart(id);
+  }
+});
+
+clearCartBtn.addEventListener('click', ()=> {
+  if(confirm('Clear cart?')) clearCart();
+});
+
+/* proceed button scrolls to delivery */
+proceedBtn.addEventListener('click', ()=>{
+  // ensure there's at least one item
+  if(cart.length===0){ alert('Cart is empty'); return; }
+  // focus delivery form
+  nameInput.focus();
+});
+
+/* init */
+renderProducts();
+renderCart();
+showPromoExpiry();
+setUpiDisplay();
+renderOrders();
+
+/* ---------- small helpers ---------- */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+function generatePlaceholderSVG(text){
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='200'><rect width='100%' height='100%' fill='%23e9f4ff'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%230b3558' font-size='18' font-family='Arial'>${escapeHtml(text)}</text></svg>`;
+  return svg;
+}
+function viewProduct(id){
+  const p = findProduct(id);
+  alert(`${p.name}\n\n${p.desc}\n\nPrice: ${fmtINR(p.price)}\n\n${p.inStock? 'In stock' : 'Out of stock'}`);
+}
+function prettyOrderText(o){
+  return `Order ${o.id}\nDate: ${new Date(o.date).toLocaleString()}\nName: ${o.name}\nPhone: ${o.phone}\nAddress: ${o.address}\n\nItems:\n${o.items.map(i=>`- ${i.name} x${i.qty} @ ₹${i.price}`).join('\n')}\n\nSubtotal: ₹${o.subtotal}\nDiscount: ₹${o.discount}\nTotal: ₹${o.total}\nTxn: ${o.txnId}`;
+}
+function renderOrderHtmlPrintable(o){
+  const itemsHtml = o.items.map(i=>`<tr><td>${escapeHtml(i.name)}</td><td style="text-align:center">${i.qty}</td><td style="text-align:right">₹${i.price}</td></tr>`).join('');
+  const html = `
+  <html><head><title>Order ${o.id}</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif; padding:20px; color:#111}
+    h1{color:#0b3558}
+    table{width:100%; border-collapse:collapse; margin-top:10px}
+    td,th{padding:8px; border-bottom:1px solid #eee}
+    .muted{color:#666; font-size:13px}
+  </style>
+  </head><body>
+    <h1>LenseKart — Order ${escapeHtml(o.id)}</h1>
+    <div class="muted">Date: ${new Date(o.date).toLocaleString()}</div>
+    <h3>Customer</h3>
+    <div>${escapeHtml(o.name)} • ${escapeHtml(o.phone)}</div>
+    <div>${escapeHtml(o.address)}</div>
+    <h3>Items</h3>
+    <table>
+      <thead><tr><th>Product</th><th style="text-align:center">Qty</th><th style="text-align:right">Price</th></tr></thead>
+      <tbody>${itemsHtml}</tbody>
+    </table>
+    <h3 style="text-align:right">Total: ₹${o.total}</h3>
+    <div style="margin-top:20px" class="muted">Transaction ID: ${escapeHtml(o.txnId)}</div>
+  </body></html>
+  `;
+  return html;
+}
+
+/* expose minimal API for console debugging */
+window._lk = { addToCart, cart, PRODUCTS, clearCart };
+
+/* Set promo suggestion expiry text */
+(function setPromoText(){
+  const opt = { year:'numeric', month:'short', day:'numeric' };
+  const d = promoExpiryDate.toLocaleDateString(undefined,opt);
+  document.getElementById('promoSuggest').querySelector('.muted')?.textContent;
+  document.getElementById('promoExpiryText').textContent = d;
+})();
+</script>
+
+</body>
+</html>
