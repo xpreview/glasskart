@@ -5,12 +5,19 @@
   <title>Preview</title>
 </head>
 <body>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Preview</title>
+</head>
+<body>
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>LenseKart — Blue Light Filter Glasses</title>
+<title>GlassKart — Blue Light Filter Glasses</title>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
 <style>
   :root{
@@ -39,8 +46,8 @@
   .container{max-width:1120px; margin:20px auto; padding:0 16px}
   .grid{display:grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap:18px}
   .card{background:var(--card); border-radius:12px; padding:14px; box-shadow:0 6px 18px rgba(10,20,40,0.04); display:flex; flex-direction:column; gap:10px}
-  .thumb{height:160px; border-radius:10px; background:linear-gradient(135deg,var(--glass),#e9f4ff); display:flex; align-items:center; justify-content:center; font-weight:700; color:#0b3558}
-  .thumb img {height: 80%; width: auto;}
+  .thumb{height:160px; border-radius:10px; background:linear-gradient(135deg,var(--glass),#e9f4ff); display:flex; align-items:center; justify-content:center; font-weight:700; color:#0b3558; position: relative; overflow: hidden;}
+  .thumb img {height: 100%; width: 100%; object-fit: cover; transition: transform 0.5s ease-in-out;}
   .title{font-size:16px; font-weight:600}
   .price{font-size:18px; font-weight:700; color:#0b3558}
   .muted{color:var(--muted); font-size:13px}
@@ -73,6 +80,29 @@
   @media (max-width:640px){
     .thumb{height:120px}
     header{padding:10px}
+    /* Mobile-specific adjustments */
+    .modal .body > div {
+      flex-direction: column;
+    }
+    .modal .body > div > div {
+      width: 100% !important;
+      min-width: unset;
+    }
+    .promo-suggestion{
+      flex-wrap: wrap;
+    }
+    /* ADDED: Mobile-specific layout for promo/summary */
+    #cartSummarySection {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    #cartSummarySection > div {
+      width: 100%;
+      margin-top: 12px;
+    }
+    #cartSummarySection .summary {
+      width: 100%;
+    }
   }
 
   /* promo box */
@@ -80,11 +110,126 @@
   .qr-wrap{display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center}
   .upi-box{background:#fff; padding:10px; border-radius:8px; border:1px dashed #e9f1ff}
   .mutetxt{color:#8a98a9; font-size:13px}
+  .remove-promo {
+    background: #eef6ff;
+    color: #666;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 8px; /* Added margin for spacing */
+  }
+
+  /* Image gallery/modal styles */
+  .gallery-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+  }
+  .gallery-container img {
+    min-width: 100%;
+    max-width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .thumb-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    padding: 0 5px;
+  }
+  .thumb-nav button {
+    background: rgba(0,0,0,0.3);
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 101;
+    cursor: zoom-out;
+  }
+  .popup-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: hidden; /* Hide extra images */
+  }
+  .popup-image-container {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  .popup-image-container img {
+    max-width: 100%;
+    min-width: 100%; /* Ensure images take full width of container */
+    max-height: 90vh;
+    object-fit: contain;
+  }
+  .popup-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 102;
+    padding: 0 10px;
+  }
+  .popup-nav button {
+    background: rgba(255,255,255,0.3);
+    border: none;
+    color: black;
+    font-size: 30px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.3);
+    color: black;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">LenseKart</div>
+  <div class="logo">GlassKart</div>
   <div class="search"><input id="siteSearch" placeholder="Search blue light glasses, e.g. 'Classic Blue'"/></div>
   <div class="iconbar">
     <div class="icon" id="ordersBtn" title="My Orders (click)">
@@ -102,9 +247,6 @@
     <div>
       <h1 style="margin:0; font-size:20px">Blue Light Filter Glasses — Comfortable, Stylish</h1>
       <div class="muted">Protect your eyes during long screen sessions</div>
-    </div>
-    <div style="text-align:right">
-      <div class="mutetxt">Promocode: <strong>CBSKARTV25</strong> — <span id="promoExpiryText"></span></div>
     </div>
   </section>
 
@@ -130,36 +272,33 @@
           <div class="cart-list" id="cartList">
             </div>
 
-          <div style="margin-top:12px">
-            <div style="display:flex; gap:8px; align-items:center; justify-content:space-between">
-              <div>
-                <label class="muted small">Promocode</label>
-                <div style="display:flex; gap:8px; margin-top:6px">
-                  <input id="promoInput" placeholder="Enter code" style="padding:10px; border-radius:8px; border:1px solid #e7efff; flex:1" />
-                  <button class="btn btn-primary" id="applyPromo">Apply</button>
-                </div>
-                <div class="promo-suggestion" id="promoSuggest">
-                  <div style="font-weight:700">Use <span style="color:var(--accent)">CBSKARTV25</span></div>
-                  <div class="muted small">— Save ₹1,501 (expires in 3 days)</div>
-                </div>
-                <div style="margin-top:8px" id="promoMsg"></div>
+          <div id="cartSummarySection" style="margin-top:12px; display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+            <div>
+              <label class="muted small">Promocode</label>
+              <div style="display:flex; gap:8px; margin-top:6px">
+                <input id="promoInput" placeholder="Enter code" style="padding:10px; border-radius:8px; border:1px solid #e7efff; flex:1" />
+                <button class="btn btn-primary" id="applyPromo">Apply</button>
               </div>
+              <div class="promo-suggestion" id="promoSuggest">
+                <div style="font-weight:700">Use <span style="color:var(--accent)">CBSKARTV25</span></div>
+                <div class="muted small">— Save ₹1,501 (expires in 3 days)</div>
+              </div>
+              <div style="margin-top:8px" id="promoMsg"></div>
+            </div>
 
-              <div style="width:320px">
-                <div class="summary">
-                  <div style="display:flex; justify-content:space-between"><div class="muted small">Subtotal</div><div id="subtotalText">₹0</div></div>
-                  <div style="display:flex; justify-content:space-between"><div class="muted small">Discount</div><div id="discountText">- ₹0</div></div>
-                  <hr style="border:none; border-top:1px dashed #eef6ff; margin:8px 0" />
-                  <div style="display:flex; justify-content:space-between; font-weight:700"><div>Total</div><div id="totalText">₹0</div></div>
-                  <div style="margin-top:10px; display:flex; gap:8px; justify-content:space-between; align-items:center">
-                    <button class="btn btn-primary" id="proceedBtn">Checkout</button>
-                    <button class="btn btn-ghost" id="clearCart">Clear</button>
-                  </div>
+            <div style="width:320px">
+              <div class="summary">
+                <div style="display:flex; justify-content:space-between"><div class="muted small">Subtotal</div><div id="subtotalText">₹0</div></div>
+                <div style="display:flex; justify-content:space-between"><div class="muted small">Discount</div><div id="discountText">- ₹0</div></div>
+                <hr style="border:none; border-top:1px dashed #eef6ff; margin:8px 0" />
+                <div style="display:flex; justify-content:space-between; font-weight:700"><div>Total</div><div id="totalText">₹0</div></div>
+                <div style="margin-top:10px; display:flex; gap:8px; justify-content:space-between; align-items:center">
+                  <button class="btn btn-primary" id="proceedBtn">Checkout</button>
+                  <button class="btn btn-ghost" id="clearCart">Clear</button>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
 
         <div style="width:360px; min-width:260px">
@@ -176,14 +315,21 @@
 
             <hr style="margin:12px 0; border:none; border-top:1px solid #f4f8ff" />
 
-            <h4 style="margin:0 0 6px 0">Payment</h4>
-            <div style="margin-top:8px" class="qr-wrap">
-              <div style="padding:10px; background:#fff; border-radius:8px; text-align:center">
-                <div style="font-size:13px; margin-bottom:6px">Scan QR</div>
-                <img id="upiQR" alt="UPI QR" style="width:140px; height:140px; border-radius:8px; background:#fff" />
+            <div id="paymentSection" style="display:none;">
+              <h4 style="margin:0 0 6px 0">Payment</h4>
+              <div style="margin-top:8px" class="qr-wrap">
+                <div style="padding:10px; background:#fff; border-radius:8px; text-align:center">
+                  <div style="font-size:13px; margin-bottom:6px">Scan QR</div>
+                  <img id="upiQR" alt="UPI QR" style="width:140px; height:140px; border-radius:8px; background:#fff" />
+                </div>
               </div>
+              <a id="openUpi" class="btn btn-primary" href="#" target="_blank" style="display:block; text-align:center; margin-top: 12px;">Proceed to Pay via UPI</a>
             </div>
-            <a id="openUpi" class="btn btn-primary" href="#" target="_blank" style="display:block; text-align:center; margin-top: 12px;">Proceed to Pay via UPI</a>
+
+            <div id="emptyCartMessage" style="color:var(--muted); text-align:center; display:none;">
+              <h4 style="margin:0 0 6px 0">Payment</h4>
+              <p>Please add product to cart first.</p>
+            </div>
 
             <div style="margin-top:12px;">
               <div class="muted small" style="color:var(--danger)">After payment, you can submit your transaction id below</div>
@@ -202,6 +348,17 @@
   </div>
 </div>
 
+<div class="popup-modal" id="imagePopupModal">
+  <div class="popup-content">
+    <div class="popup-image-container" id="popupImageContainer"></div>
+    <div class="popup-nav">
+      <button id="popupPrevBtn">‹</button>
+      <button id="popupNextBtn">›</button>
+    </div>
+    <button class="popup-close" id="popupCloseBtn">×</button>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="ordersModal">
   <div class="modal" role="dialog" aria-modal="true" style="max-width:820px">
     <div class="head">
@@ -211,13 +368,13 @@
     <div class="body">
       <div class="orders-list" id="ordersList">
         </div>
-      <div style="margin-top:12px; color:var(--muted); font-size:13px">Saved locally. Click an order to view/print/download as PDF.</div>
+      <div style="margin-top:12px; color:var(--muted); font-size:13px">Click an order to view/print/download as PDF.</div>
     </div>
   </div>
 </div>
 
 <footer>
-  © LenseKart — Built for Sanket. Enjoy selling! — UPI: oksdcb@ybl
+  © 2025 — GlassKart
 </footer>
 
 <script>
@@ -233,17 +390,23 @@ const PRODUCTS = (() => {
   // first product (in stock)
   arr.push({
     id: 'g1',
-    name: 'Classic Blue Light Filter Glasses',
+    name: 'Classic Blue Light Filter Glasses (Premium)',
     desc: 'Anti-glare lenses, lightweight frame, unisex.',
     price: 2299,
     inStock: true,
-    img: 'https://i.ibb.co/60V0G5M/glasses-1.png'
+    img: [
+      'https://raw.githubusercontent.com/xpreview/glasskart/refs/heads/main/WhatsApp%20Image%202025-09-21%20at%2017.45.57_274d9503.jpg',
+      'https://raw.githubusercontent.com/xpreview/glasskart/refs/heads/main/WhatsApp%20Image%202025-09-21%20at%2017.45.57_95d0550a.jpg',
+      'https://raw.githubusercontent.com/xpreview/glasskart/refs/heads/main/WhatsApp%20Image%202025-09-21%20at%2017.45.58_768881fb.jpg',
+      'https://raw.githubusercontent.com/xpreview/glasskart/refs/heads/main/WhatsApp%20Image%202025-09-21%20at%2018.13.08_a3bf6a6d.jpg',
+      'https://raw.githubusercontent.com/xpreview/glasskart/refs/heads/main/WhatsApp%20Image%202025-09-21%20at%2018.13.08_80f4e672.jpg'
+    ]
   });
   // other 14 products out of stock
   for(let i=2;i<=15;i++){
     arr.push({
       id: 'g'+i,
-      name: `Style ${i} — Blue Filter Glasses`,
+      name: `Classic Blue Filter Glass Model ${i}`,
       desc: 'Currently unavailable.',
       price: 2299 + i*10,
       inStock: false,
@@ -301,16 +464,29 @@ const openUpiLink = document.getElementById('openUpi');
 const txnInput = document.getElementById('txnInput');
 const submitTxnBtn = document.getElementById('submitTxn');
 const txnMsg = document.getElementById('txnMsg');
+const paymentSection = document.getElementById('paymentSection');
+const emptyCartMessage = document.getElementById('emptyCartMessage');
 
 const ordersBtn = document.getElementById('ordersBtn');
 const ordersModal = document.getElementById('ordersModal');
 const ordersList = document.getElementById('ordersList');
 const closeOrders = document.getElementById('closeOrders');
 
-const cartCountKey = 'lk_cart_v1';
-const ordersKey = 'lk_orders_v1';
+const imagePopupModal = document.getElementById('imagePopupModal');
+const popupImageContainer = document.getElementById('popupImageContainer');
+const popupPrevBtn = document.getElementById('popupPrevBtn');
+const popupNextBtn = document.getElementById('popupNextBtn');
+const popupCloseBtn = document.getElementById('popupCloseBtn');
+
+const cartCountKey = 'gk_cart_v1';
+const ordersKey = 'gk_orders_v1';
+const txnsKey = 'gk_txns_v1';
+const userDetailsKey = 'gk_userDetails_v1';
+
 let cart = loadCart();
 let appliedPromo = loadPromo(); // {code, appliedOn}
+let currentImageIndex = 0;
+let currentProductImages = [];
 
 function loadCart(){
   try{
@@ -323,12 +499,36 @@ function saveCart(){
 }
 function loadPromo(){
   try{
-    const raw = localStorage.getItem('lk_promo_v1');
+    const raw = localStorage.getItem('gk_promo_v1');
     return raw ? JSON.parse(raw) : null;
   }catch(e){ return null; }
 }
 function savePromo(){
-  localStorage.setItem('lk_promo_v1', JSON.stringify(appliedPromo));
+  localStorage.setItem('gk_promo_v1', JSON.stringify(appliedPromo));
+}
+function saveUserDetails() {
+  const userDetails = {
+    name: nameInput.value,
+    phone: phoneInput.value,
+    address: addressInput.value,
+    pincode: pincodeInput.value
+  };
+  localStorage.setItem(userDetailsKey, JSON.stringify(userDetails));
+}
+function loadUserDetails() {
+  try {
+    const raw = localStorage.getItem(userDetailsKey);
+    if (raw) {
+      const userDetails = JSON.parse(raw);
+      nameInput.value = userDetails.name || '';
+      phoneInput.value = userDetails.phone || '';
+      addressInput.value = userDetails.address || '';
+      pincodeInput.value = userDetails.pincode || '';
+      updateDeliveryEstimate();
+    }
+  } catch (e) {
+    console.error('Failed to load user details from local storage', e);
+  }
 }
 
 /* ---------- Render products ---------- */
@@ -337,7 +537,22 @@ function renderProducts(list=PRODUCTS){
   for(const p of list){
     const el = document.createElement('div');
     el.className = 'card' + (p.inStock ? '' : ' out');
-    const thumbContent = p.img ? `<img src="${p.img}" alt="${escapeHtml(p.name)}" />` : (p.inStock ? 'In stock' : 'Out of stock');
+    
+    let thumbContent;
+    if (p.id === 'g1' && p.img && p.img.length > 0) {
+      thumbContent = `
+        <div class="gallery-container" id="gallery-${p.id}">
+          ${p.img.map(imgSrc => `<img src="${imgSrc}" alt="${escapeHtml(p.name)}" />`).join('')}
+        </div>
+        <div class="thumb-nav">
+          <button class="prev-thumb" data-id="${p.id}">‹</button>
+          <button class="next-thumb" data-id="${p.id}">›</button>
+        </div>
+      `;
+    } else {
+      thumbContent = p.img ? `<img src="${p.img}" alt="${escapeHtml(p.name)}" />` : (p.inStock ? 'In stock' : 'Out of stock');
+    }
+
     el.innerHTML = `
       <div class="thumb">${thumbContent}</div>
       <div style="display:flex; justify-content:space-between; align-items:center">
@@ -352,12 +567,73 @@ function renderProducts(list=PRODUCTS){
       </div>
       <div style="display:flex; gap:8px; margin-top:8px">
         <button class="btn btn-primary addToCart" data-id="${p.id}" ${p.inStock ? '' : 'disabled'}>${p.inStock ? 'Add to cart' : 'Notify me'}</button>
-        <button class="btn btn-ghost" data-id="${p.id}" onclick="viewProduct('${p.id}')">View</button>
+        <button class="btn btn-ghost viewProductBtn" data-id="${p.id}" ${p.id !== 'g1' ? 'disabled' : ''}>View</button>
       </div>
     `;
     productGrid.appendChild(el);
   }
 }
+
+/* ---------- Image Gallery & Popup Logic ---------- */
+function updateThumbGallery(id, index) {
+  const gallery = document.getElementById(`gallery-${id}`);
+  if (!gallery) return;
+  const imageWidth = gallery.children[0].offsetWidth;
+  gallery.style.transform = `translateX(-${index * imageWidth}px)`;
+}
+
+function showPopup(id) {
+  const product = findProduct(id);
+  if (!product || !product.img || !Array.isArray(product.img) || product.img.length === 0) {
+    alert('No images to display.');
+    return;
+  }
+  currentProductImages = product.img;
+  currentImageIndex = 0;
+  popupImageContainer.innerHTML = '';
+  currentProductImages.forEach(imgSrc => {
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = product.name;
+    popupImageContainer.appendChild(img);
+  });
+  updatePopupImage(currentImageIndex);
+  imagePopupModal.style.display = 'flex';
+}
+
+function updatePopupImage(index) {
+  const container = document.getElementById('popupImageContainer');
+  const imageWidth = container.children[0].offsetWidth;
+  container.style.transform = `translateX(-${index * imageWidth}px)`;
+  popupPrevBtn.disabled = index === 0;
+  popupNextBtn.disabled = index === currentProductImages.length - 1;
+}
+
+popupPrevBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentImageIndex > 0) {
+    currentImageIndex--;
+    updatePopupImage(currentImageIndex);
+  }
+});
+
+popupNextBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentImageIndex < currentProductImages.length - 1) {
+    currentImageIndex++;
+    updatePopupImage(currentImageIndex);
+  }
+});
+
+popupCloseBtn.addEventListener('click', () => {
+  imagePopupModal.style.display = 'none';
+});
+
+imagePopupModal.addEventListener('click', (e) => {
+  if (e.target.id === 'imagePopupModal') {
+    imagePopupModal.style.display = 'none';
+  }
+});
 
 /* ---------- Cart logic ---------- */
 function findProduct(id){ return PRODUCTS.find(x=>x.id===id); }
@@ -417,12 +693,14 @@ function renderCart(){
   cartListEl.innerHTML = '';
   if(cart.length===0){
     cartListEl.innerHTML = '<div class="muted">Your cart is empty. Add items to proceed.</div>';
+    paymentSection.style.display = 'none';
+    emptyCartMessage.style.display = 'block';
   }else{
     for(const it of cart){
       const row = document.createElement('div');
       row.className = 'cart-item';
       const p = findProduct(it.id);
-      const imgSource = p.img ? p.img : `data:image/svg+xml;utf8,${encodeURIComponent(generatePlaceholderSVG(p.name))}`;
+      const imgSource = (Array.isArray(p.img) && p.img.length > 0) ? p.img[0] : (p.img ? p.img : `data:image/svg+xml;utf8,${encodeURIComponent(generatePlaceholderSVG(p.name))}`);
       row.innerHTML = `
         <img src="${imgSource}" alt="${escapeHtml(p.name)}" />
         <div style="flex:1">
@@ -443,6 +721,8 @@ function renderCart(){
       `;
       cartListEl.appendChild(row);
     }
+    paymentSection.style.display = 'block';
+    emptyCartMessage.style.display = 'none';
   }
   const totals = calcTotals();
   subtotalText.textContent = fmtINR(totals.subtotal);
@@ -462,26 +742,47 @@ function showPromoExpiry(){
   // also in suggestion small text:
   promoSuggest.querySelector('.muted')?.textContent;
 }
+
+function removePromo(){
+  appliedPromo = null;
+  savePromo();
+  promoInput.value = '';
+  promoMsg.innerHTML = '';
+  renderCart();
+}
+
 applyPromoBtn.addEventListener('click', ()=>{
   const code = (promoInput.value || '').trim();
   if(!code){
-    promoMsg.textContent = 'Enter a promocode';
+    // CHANGED: Added logic to remove discount on empty code
+    appliedPromo = null;
+    savePromo();
+    promoMsg.innerHTML = '<span style="color:var(--danger)">Enter a promocode</span>';
+    renderCart();
     return;
   }
   if(isPromoExpired()){
-    promoMsg.innerHTML = '<span style="color:var(--danger)">This promocode has expired.</span>';
     appliedPromo = null;
     savePromo();
+    promoMsg.innerHTML = '<span style="color:var(--danger)">This promocode has expired.</span>';
     renderCart();
     return;
   }
   if(code === PROMO_CODE){
     appliedPromo = { code: code, appliedOn: new Date().toISOString() };
     savePromo();
-    promoMsg.innerHTML = `<span style="color:var(--success)">Applied ${code} — ₹${PROMO_DISCOUNT} off</span>`;
+    promoMsg.innerHTML = `<span style="color:var(--success)">Applied ${code} — ₹${PROMO_DISCOUNT} off</span> <span class="remove-promo">×</span>`;
+    const removeBtn = promoMsg.querySelector('.remove-promo');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', removePromo);
+    }
     renderCart();
   }else{
+    // CHANGED: Added logic to clear promo for invalid codes
+    appliedPromo = null;
+    savePromo();
     promoMsg.innerHTML = '<span style="color:var(--danger)">Invalid promocode</span>';
+    renderCart();
   }
 });
 
@@ -505,8 +806,8 @@ const upiId = 'oksdcb@ybl';
 function buildUpiLink(amount){
   // amount optional
   const pa = encodeURIComponent(upiId);
-  const pn = encodeURIComponent('LenseKart');
-  const mc = encodeURIComponent('LenseKart');
+  const pn = encodeURIComponent('GlassKart');
+  const mc = encodeURIComponent('GlassKart');
   let link = `upi://pay?pa=${pa}&pn=${pn}&mc=${mc}`;
   if(amount) link += `&am=${amount}`;
   link += `&cu=INR`;
@@ -529,14 +830,25 @@ submitTxnBtn.addEventListener('click', async ()=>{
   const phone = (phoneInput.value||'').trim();
   const addr = (addressInput.value||'').trim();
   const pin = (pincodeInput.value||'').trim();
-  if(!txn || !name || !phone || !addr || cart.length===0){
-    txnMsg.innerHTML = '<span style="color:var(--danger)">Please complete name, phone, address, cart and enter transaction id.</span>';
+  
+  const submittedTxns = JSON.parse(localStorage.getItem(txnsKey) || '[]');
+  if (submittedTxns.includes(txn)) {
+    txnMsg.innerHTML = '<span style="color:var(--danger)">Transaction ID already submitted.</span>';
     return;
   }
+
+  if(!txn || !name || !phone || !addr || cart.length===0){
+    txnMsg.innerHTML = '<span style="color:var(--danger)">Please add products to cart and complete all details (name, phone, address) before submitting.</span>';
+    return;
+  }
+
+  // Save user details to local storage
+  saveUserDetails();
+
   // build data payload
   const order = {
     id: 'ORD-'+Date.now(),
-    name, phone, address: addr, pincode: pin, txnId: txn,
+    name, phone, address: `${addr}, Pincode: ${pin}`, txnId: txn,
     items: cart.map(c=>({id:c.id, name:c.name, qty:c.qty, price:c.price})),
     subtotal: calcTotals().subtotal,
     discount: calcTotals().discount,
@@ -551,9 +863,11 @@ submitTxnBtn.addEventListener('click', async ()=>{
       // placeholder: still save order locally and show success, but warn user
       txnMsg.innerHTML = '<span style="color:var(--muted)">Formspree endpoint not configured. Replace FORMSPREE_URL in the HTML with your endpoint to send data. Order saved locally.</span>';
       saveOrder(order);
+      submittedTxns.push(txn);
+      localStorage.setItem(txnsKey, JSON.stringify(submittedTxns));
       clearCart();
       renderOrders();
-      txnMsg.innerHTML += '<div style="color:var(--success)">Order saved locally.</div>';
+      txnMsg.innerHTML = `<span style="color:var(--success)">✔ Transaction ID submitted!</span>`;
       return;
     }
     const formData = new FormData();
@@ -571,8 +885,10 @@ submitTxnBtn.addEventListener('click', async ()=>{
 
     const res = await fetch(FORMSPREE_URL, { method:'POST', body: formData, headers: { 'Accept': 'application/json' } });
     if(res.ok){
-      txnMsg.innerHTML = '<span style="color:var(--success)">Submitted successfully. Thank you!</span>';
+      txnMsg.innerHTML = `<span style="color:var(--success)">✔ Transaction ID submitted!</span>`;
       saveOrder(order);
+      submittedTxns.push(txn);
+      localStorage.setItem(txnsKey, JSON.stringify(submittedTxns));
       clearCart();
       renderOrders();
     }else{
@@ -667,6 +983,8 @@ document.getElementById('siteSearch').addEventListener('input', (e)=>{
 
 function showCart(){
   renderCart();
+  loadUserDetails();
+  txnMsg.textContent = ''; // clear any previous messages
   cartModal.style.display = 'flex';
 }
 
@@ -674,6 +992,29 @@ document.getElementById('productGrid').addEventListener('click', (e)=>{
   if(e.target.classList.contains('addToCart')){
     const id = e.target.dataset.id;
     addToCart(id, 1);
+  } else if (e.target.classList.contains('viewProductBtn')) {
+    const id = e.target.dataset.id;
+    if (id === 'g1') {
+      showPopup(id);
+    }
+  } else if (e.target.classList.contains('prev-thumb')) {
+    const id = e.target.dataset.id;
+    const product = findProduct(id);
+    if (!product || !product.img) return;
+    const gallery = document.getElementById(`gallery-${id}`);
+    const currentIdx = parseInt(gallery.dataset.index || '0');
+    const newIdx = Math.max(0, currentIdx - 1);
+    gallery.dataset.index = newIdx;
+    updateThumbGallery(id, newIdx);
+  } else if (e.target.classList.contains('next-thumb')) {
+    const id = e.target.dataset.id;
+    const product = findProduct(id);
+    if (!product || !product.img) return;
+    const gallery = document.getElementById(`gallery-${id}`);
+    const currentIdx = parseInt(gallery.dataset.index || '0');
+    const newIdx = Math.min(product.img.length - 1, currentIdx + 1);
+    gallery.dataset.index = newIdx;
+    updateThumbGallery(id, newIdx);
   }
 });
 
@@ -708,7 +1049,7 @@ proceedBtn.addEventListener('click', ()=>{
 renderProducts();
 renderCart();
 showPromoExpiry();
-setUpiDisplay();
+loadUserDetails();
 renderOrders();
 
 /* ---------- small helpers ---------- */
@@ -736,7 +1077,7 @@ function renderOrderHtmlPrintable(o){
     .muted{color:#666; font-size:13px}
   </style>
   </head><body>
-    <h1>LenseKart — Order ${escapeHtml(o.id)}</h1>
+    <h1>GlassKart — Order ${escapeHtml(o.id)}</h1>
     <div class="muted">Date: ${new Date(o.date).toLocaleString()}</div>
     <h3>Customer</h3>
     <div>${escapeHtml(o.name)} • ${escapeHtml(o.phone)}</div>
@@ -754,7 +1095,7 @@ function renderOrderHtmlPrintable(o){
 }
 
 /* expose minimal API for console debugging */
-window._lk = { addToCart, cart, PRODUCTS, clearCart };
+window._gk = { addToCart, cart, PRODUCTS, clearCart };
 
 /* Set promo suggestion expiry text */
 (function setPromoText(){
@@ -765,5 +1106,7 @@ window._lk = { addToCart, cart, PRODUCTS, clearCart };
 })();
 </script>
 
+</body>
+</html>
 </body>
 </html>
